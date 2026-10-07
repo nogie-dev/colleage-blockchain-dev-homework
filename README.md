@@ -41,3 +41,20 @@ GitHub: https://github.com/nogie-dev/colleage-blockchain-dev-homework
 기부 함수의 Value는 Remix에서 ETH 단위를 선택합니다. 반면 페이지 13의 `refund` 인자는 Solidity `uint256` wei 값이므로, `0.3 ether` 환불은 `300000000000000000`으로 입력합니다. 코드에 표시된 금액 누적값도 wei 단위입니다.
 
 페이지 4의 `activate()`는 `isOpen()`의 참 조건을 시험하기 위한 작은 실습 보조 함수입니다. 페이지 19의 `getProfile()`도 동적 문자열인 이름까지 Remix에서 확인할 수 있도록 추가했습니다. 나머지 함수와 저장 구조는 자료의 예제를 따릅니다.
+
+## Remix VM 배포 및 테스트 결과
+
+2026-10-07에 Remix VM을 사용해 여덟 컨트랙트를 각각 Solidity `0.8.20`으로 컴파일하고 배포했습니다. 아래는 해당 세션에서 실제로 확인한 결과입니다. Remix VM은 브라우저 세션용 로컬 테스트 환경이므로 이 배포 주소와 상태는 공개 테스트넷에 남지 않습니다.
+
+| 자료 페이지 | 실행한 동작 | 확인 결과 |
+| --- | --- | --- |
+| 4 | `activate()` → `isOpen()` → `finalize()` → `isOpen()` | `true` 후 `false` |
+| 6 | `inc(3)`, `count()`, `delta()`, `dec(1)`, `dec(5)` | `count=3`, `delta=3`; `dec(1)` 성공; 초과 차감은 `n exceeds count`로 revert |
+| 7 | Account 2를 수혜자로 배포; `deposit`에 1 ETH; `sendToBeneficiary(1000000000000000000)` | 입금 및 수혜자 송금 트랜잭션 성공 |
+| 10 | `category=1`로 배포; `isHealth()` | `true` |
+| 13 | Account 1과 Account 2가 각각 1 ETH 기부; Account 2가 0.3 ETH 환불 | Account 2 기록 `0.7 ETH`; 누적 기부액 `2 ETH` |
+| 14 | 캠페인 1에 Account 2가 1 wei, Account 1이 2 wei; 캠페인 2에 Account 1이 3 wei 기부 | 주소와 캠페인별 mapping 값 `1`, `2`, `3`; 미기부 조합은 `0` |
+| 16 | `open(1)`, `open(7)`, `open(4)`, `swapRemove(1)`, `closeLast()` | 배열 원소가 `[1,7,4]`에서 `[1,4]`, 마지막으로 `[1]`이 되는 것을 확인 |
+| 19 | Account 1에서 `join("kim")`, `addScore(5)`, `addScore(3)`, `getProfile(Account 1)` | 이름 `kim`, 점수 `8` |
+
+페이지 13의 표는 실제 테스트 세션의 송금 값을 그대로 기록했습니다. `0.5 ETH` 단위 입력이 필요한 경우 Remix의 Value 단위를 `wei`로 바꾸고 `500000000000000000`을 입력하면 됩니다.
