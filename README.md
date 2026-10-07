@@ -22,3 +22,22 @@
 ## 제출 저장소
 
 GitHub: https://github.com/nogie-dev/colleage-blockchain-dev-homework
+
+## Solidity 데이터 타입 실습
+
+지정된 강의자료 페이지마다 독립된 컨트랙트 파일을 두었습니다. Remix에서 저장소를 불러온 뒤 Solidity `0.8.20`과 `Remix VM`을 선택하고, 각 파일을 컴파일한 다음 해당 컨트랙트를 배포하면 됩니다.
+
+| 자료 페이지 | 파일 | Remix에서 확인할 순서 |
+| --- | --- | --- |
+| 4 | `contracts/solidity-data-types/CampaignFlag.sol` | `activate` → `isOpen`이 `true`; `finalize` → `isOpen`이 `false`, `succeeded`가 `true` |
+| 6 | `Counter.sol` | `inc(3)` → `count=3`, `delta=3`; `dec(1)` → `count=2`, `delta=2`; `dec(5)`는 revert |
+| 7 | `AddressTypes.sol` | Account 2 주소로 배포; `inspectDonor()`로 balance/codehash/code 조회; Account 3에서 Value `1 ether`로 `deposit`; 배포 계정에서 `sendToBeneficiary(1000000000000000000)` |
+| 10 | `CampaignRegistry.sol` | `code`에 bytes32 값, `category`에 `1`을 넣어 배포; `category=1`, `isHealth=true` 확인 |
+| 13 | `DonorBook.sol` | Account 3에서 `1 ether`, Account 4에서 `0.5 ether` 기부; Account 3에서 `refund(300000000000000000)`; 누적 기부액은 `1.5 ether`, Account 3 기록은 `0.7 ether` |
+| 14 | `CampaignDonations.sol` | Account 3과 Account 4가 같은 캠페인 ID로 각각 기부; `campaignsById(campaignId, donor)`로 주소별 값 조회 |
+| 16 | `CampaignRoster.sol` | `open(1)`, `open(7)`, `open(4)` → `[1,7,4]`; `swapRemove(1)` → `[1,4]`; `closeLast` → `[1]` |
+| 19 | `ProfileBook.sol` | Account 3에서 `join("kim")`, `addScore(5)`, `addScore(3)`; `getProfile(Account 3)` → `kim`, `8`; Account 4는 별도 프로필 |
+
+기부 함수의 Value는 Remix에서 ETH 단위를 선택합니다. 반면 페이지 13의 `refund` 인자는 Solidity `uint256` wei 값이므로, `0.3 ether` 환불은 `300000000000000000`으로 입력합니다. 코드에 표시된 금액 누적값도 wei 단위입니다.
+
+페이지 4의 `activate()`는 `isOpen()`의 참 조건을 시험하기 위한 작은 실습 보조 함수입니다. 페이지 19의 `getProfile()`도 동적 문자열인 이름까지 Remix에서 확인할 수 있도록 추가했습니다. 나머지 함수와 저장 구조는 자료의 예제를 따릅니다.
